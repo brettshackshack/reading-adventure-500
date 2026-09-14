@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Adventure - 500 Point Challenge</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;min-height:100vh;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);display:flex;justify-content:center;align-items:center;padding:20px;color:#172554}
+.game{width:650px;max-width:100%;background:white;border-radius:28px;padding:30px;box-shadow:0 20px 50px rgba(0,0,0,.25);text-align:center}
+h1{margin:0;font-size:34px;color:#4f46e5}.subtitle{margin-top:8px;color:#64748b;font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:25px 0}
+.stat{background:#eef2ff;border-radius:15px;padding:12px 5px}.stat-label{display:block;font-size:13px;color:#64748b;font-weight:bold}
+.number{display:block;font-size:25px;font-weight:bold;margin-top:5px;color:#4338ca}
+.difficulty{background:#fef3c7;color:#92400e;border-radius:15px;padding:12px;font-weight:bold;margin-bottom:20px}
+.bar-label{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:7px}
+.bar{width:100%;height:22px;background:#e2e8f0;border-radius:20px;overflow:hidden}.progress{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .4s}
+.reading-box{text-align:left;background:#f8fafc;border-left:6px solid #6366f1;border-radius:15px;padding:20px;margin-top:25px;line-height:1.6;font-size:17px}
+.reading-title{font-weight:bold;color:#4f46e5;margin-bottom:8px}
+#question{font-size:21px;font-weight:bold;margin:25px 0 15px;color:#172554}
+.answer{display:block;width:90%;margin:10px auto;padding:14px;border:2px solid #c7d2fe;border-radius:13px;background:#eef2ff;color:#312e81;font-size:16px;font-weight:bold;cursor:pointer;transition:.15s}
+.answer:hover:not(:disabled){background:#c7d2fe;transform:translateY(-2px)}.answer:disabled{cursor:not-allowed;opacity:.7}
+.correct{background:#bbf7d0!important;border-color:#22c55e!important}.wrong{background:#fecaca!important;border-color:#ef4444!important}
+#message{min-height:30px;margin:18px 0;font-size:18px;font-weight:bold}
+.reset{border:none;border-radius:12px;padding:12px 20px;background:#ef4444;color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:10px}
+.reset:hover{background:#dc2626}.complete{padding:25px;background:#dcfce7;border-radius:20px;color:#166534;font-size:23px;font-weight:bold;margin-top:20px}
+.encouragement{color:#7c3aed;font-weight:bold;margin-top:8px}
+@media(max-width:550px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}.game{padding:20px}}
+</style>
+</head>
+<body>
+<div class="game">
+<h1>📚 Reading Adventure!</h1>
+<div class="subtitle">Answer questions, level up, and reach 500 points! 🚀</div>
+<div class="stats">
+<div class="stat"><span class="stat-label">⭐ POINTS</span><span class="number" id="points">0</span></div>
+<div class="stat"><span class="stat-label">🏆 GOAL</span><span class="number">500</span></div>
+<div class="stat"><span class="stat-label">🔥 STREAK</span><span class="number" id="streak">0</span></div>
+<div class="stat"><span class="stat-label">📈 LEVEL</span><span class="number" id="level">1</span></div>
+</div>
+<div class="difficulty" id="difficulty">🟢 Level 1 — Warm Up</div>
+<div class="bar-label"><span>Your Progress</span><span id="percentage">0%</span></div>
+<div class="bar"><div class="progress" id="progress"></div></div>
+<div class="reading-box"><div class="reading-title">📖 Read the passage:</div><div id="passage"></div></div>
+<div id="question"></div><div id="answers"></div><div id="message"></div>
+<div class="encouragement" id="encouragement">You've got this! 🌟</div>
+<button class="reset" id="resetButton">🔄 Start Over</button>
+</div>
+<script>
+const DAILY_LIMIT=500, POINTS_PER_CORRECT=50;
+let points=0,streak=0,level=1,currentQuestion=null,questionAnswered=false,nextQuestionTimer=null;
 
+const questionBank=[
+{level:1,passage:"Emma planted a small tomato plant in her backyard. Every morning, she gave it water and made sure it received plenty of sunlight. After several weeks, tiny green tomatoes began to appear.",question:"What did Emma do every morning?",answers:["She picked tomatoes.","She watered the plant.","She moved the plant inside.","She planted new flowers."],correct:"She watered the plant."},
+{level:1,passage:"Ben packed his backpack before school. He put in his homework, a pencil case, two books, and his lunch. Then he checked his backpack one more time before leaving.",question:"Why did Ben check his backpack again?",answers:["He wanted to make sure he had everything.","He wanted to make his backpack heavier.","He was looking for a toy.","He wanted to eat his lunch."],correct:"He wanted to make sure he had everything."},
+{level:2,passage:"The school garden had once been an empty patch of dirt. Students planted vegetables, flowers, and herbs. They watered the plants and pulled out weeds. By the end of spring, the garden was full of color and life.",question:"What is the main idea of the passage?",answers:["Students dislike gardening.","The school garden changed because students cared for it.","Gardens only need flowers.","The students planted the garden in winter."],correct:"The school garden changed because students cared for it."},
+{level:2,passage:"Marcus wanted to join the basketball team, but he knew he needed to improve his skills. He practiced shooting baskets every afternoon. After a month of practice, he made the team.",question:"Which detail best supports the idea that Marcus worked hard?",answers:["He wanted to join the team.","He practiced every afternoon.","He liked basketball.","He watched other people play."],correct:"He practiced every afternoon."},
+{level:3,passage:"The trail became difficult to follow after the storm. Fallen branches covered parts of the path, and thick mud made each step challenging.",question:"What does 'challenging' most likely mean in the passage?",answers:["Easy","Difficult","Quiet","Beautiful"],correct:"Difficult"},
+{level:3,passage:"Lena was reluctant to give her speech. She stood behind the curtain and took a deep breath before finally walking onto the stage.",question:"What does 'reluctant' mean?",answers:["Excited and ready","Unwilling or unsure","Angry and loud","Confused about the topic"],correct:"Unwilling or unsure"},
+{level:4,passage:"Jake looked out the window at the dark clouds. He quickly grabbed his jacket and ran outside to bring the laundry off the clothesline.",question:"What can the reader infer?",answers:["Jake expected it might rain.","Jake wanted to wash the clothes.","Jake was going to school.","Jake did not like his jacket."],correct:"Jake expected it might rain."},
+{level:4,passage:"After opening the door, Mia noticed muddy footprints across the floor. Her dog sat nearby with its tail wagging and a guilty look on its face.",question:"What most likely caused the muddy footprints?",answers:["Mia's dog walked inside.","Mia spilled a glass of water.","Someone painted the floor.","The floor became muddy by itself."],correct:"Mia's dog walked inside."},
+{level:5,passage:"The wind howled through the trees as the branches danced wildly above the hikers.",question:"What does the phrase 'branches danced' mean?",answers:["The branches moved back and forth in the wind.","The branches made music.","The branches grew taller.","The branches were covered in lights."],correct:"The branches moved back and forth in the wind."},
+{level:5,passage:"When the test was placed on his desk, Carlos's stomach became a knot.",question:"What does the phrase 'his stomach became a knot' suggest?",answers:["Carlos was hungry.","Carlos felt nervous.","Carlos was excited about lunch.","Carlos had just finished exercising."],correct:"Carlos felt nervous."},
+{level:6,passage:"Recycling paper, plastic, and metal can help reduce the amount of trash sent to landfills. Reusing items can also save energy and natural resources. Small choices made by many people can make a large difference.",question:"What is the author's main purpose?",answers:["To entertain readers with a story","To explain why recycling and reusing are helpful","To describe how landfills are built","To convince people to throw things away"],correct:"To explain why recycling and reusing are helpful"},
+{level:6,passage:"Many people think owls are active only at night. While many owl species are nocturnal, some species are active during the day. Their behavior depends on the species and its environment.",question:"Why did the author include this information?",answers:["To correct an overly broad belief about owls","To explain how to train an owl","To describe what owls eat","To tell a funny story about owls"],correct:"To correct an overly broad belief about owls"},
+{level:7,passage:"Daniel stared at the unfinished model on his desk. He had spent three hours building it, but one section refused to fit correctly. For a moment, he considered throwing it away. Instead, he studied the instructions again and noticed a small step he had skipped. He fixed the mistake and finished the model before dinner.",question:"What is the most important lesson from this passage?",answers:["Models are easy to build.","Giving up is sometimes the best choice.","Careful thinking can help solve difficult problems.","Instructions are usually unnecessary."],correct:"Careful thinking can help solve difficult problems."},
+{level:7,passage:"The town's old theater had been empty for years. Some people wanted to tear it down, but others believed it was worth saving. They pointed out its historic architecture and memories shared by generations of families. Eventually, the town repaired the building and turned it into a community arts center.",question:"Why did some people want to save the theater?",answers:["They wanted to build a new theater.","They valued its history and importance to the community.","They wanted the building to remain empty.","They disliked the new arts center."],correct:"They valued its history and importance to the community."}
+];
+
+const pointsElement=document.getElementById("points"),progressElement=document.getElementById("progress"),percentageElement=document.getElementById("percentage"),questionElement=document.getElementById("question"),answersElement=document.getElementById("answers"),messageElement=document.getElementById("message"),passageElement=document.getElementById("passage"),streakElement=document.getElementById("streak"),levelElement=document.getElementById("level"),difficultyElement=document.getElementById("difficulty"),encouragementElement=document.getElementById("encouragement");
+
+function getDifficultyName(){return {1:"🟢 Level 1 — Warm Up",2:"🟢 Level 2 — Getting Started",3:"🟡 Level 3 — Think About It",4:"🟡 Level 4 — Reading Detective",5:"🟠 Level 5 — Brain Power",6:"🔴 Level 6 — Expert Reader",7:"🔥 Level 7 — Reading Master"}[level];}
+function newQuestion(){
+ if(points>=DAILY_LIMIT){showComplete();return}
+ questionAnswered=false;
+ const available=questionBank.filter(q=>q.level===level);
+ const pool=available.length?available:questionBank.filter(q=>q.level===7);
+ currentQuestion=pool[Math.floor(Math.random()*pool.length)];
+ passageElement.textContent=currentQuestion.passage;
+ questionElement.textContent=currentQuestion.question;
+ answersElement.innerHTML="";
+ currentQuestion.answers.forEach(answer=>{
+  const button=document.createElement("button");
+  button.textContent=answer;button.className="answer";button.type="button";
+  button.addEventListener("click",()=>checkAnswer(answer,button));
+  answersElement.appendChild(button);
+ });
+ difficultyElement.textContent=getDifficultyName();levelElement.textContent=level;
+}
+function checkAnswer(answer,clickedButton){
+ if(questionAnswered)return;
+ questionAnswered=true;
+ const buttons=answersElement.querySelectorAll("button");
+ buttons.forEach(b=>b.disabled=true);
+ if(answer===currentQuestion.correct){
+  clickedButton.classList.add("correct");points+=Math.min(POINTS_PER_CORRECT,DAILY_LIMIT-points);streak++;
+  if(level<7)level++;
+  messageElement.textContent=["🎉 Great job!","🌟 Awesome!","🔥 You're on fire!","🧠 Super thinking!","🚀 Amazing reading!","🏆 Excellent work!"][Math.floor(Math.random()*6)];
+  messageElement.style.color="#16a34a";
+  encouragementElement.textContent=`🔥 ${streak} correct in a row! The next question is harder!`;
+ }else{
+  clickedButton.classList.add("wrong");
+  buttons.forEach(b=>{if(b.textContent===currentQuestion.correct)b.classList.add("correct")});
+  streak=0;if(level>1)level--;
+  messageElement.textContent="💪 Good try! Read carefully and keep going!";
+  messageElement.style.color="#dc2626";encouragementElement.textContent="📖 Mistakes help your brain learn!";
+ }
+ updateDisplay();clearTimeout(nextQuestionTimer);
+ nextQuestionTimer=setTimeout(()=>{messageElement.textContent="";newQuestion()},1200);
+}
+function updateDisplay(){
+ pointsElement.textContent=points;streakElement.textContent=streak;levelElement.textContent=level;
+ const p=Math.min(points/DAILY_LIMIT*100,100);progressElement.style.width=p+"%";percentageElement.textContent=Math.round(p)+"%";
+}
+function showComplete(){
+ passageElement.textContent="🎊 You did it! You became a Reading Master!";
+ questionElement.innerHTML='<div class="complete">🏆 500 POINTS! 🏆<br><br>You completed the Reading Adventure!</div>';
+ answersElement.innerHTML="";messageElement.textContent="🌟 Fantastic work!";messageElement.style.color="#16a34a";encouragementElement.textContent="📚 Keep reading and keep learning!";
+}
+function resetGame(){
+ clearTimeout(nextQuestionTimer);nextQuestionTimer=null;points=0;streak=0;level=1;currentQuestion=null;questionAnswered=false;
+ messageElement.textContent="";encouragementElement.textContent="You've got this! 🌟";updateDisplay();newQuestion();
+}
+document.getElementById("resetButton").addEventListener("click",resetGame);
+updateDisplay();newQuestion();
+</script>
+</body>
