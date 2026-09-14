@@ -3,125 +3,310 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reading Adventure - 500 Point Challenge</title>
+<title>Reading Warmup - 500 Point Challenge</title>
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;min-height:100vh;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);display:flex;justify-content:center;align-items:center;padding:20px;color:#172554}
-.game{width:650px;max-width:100%;background:white;border-radius:28px;padding:30px;box-shadow:0 20px 50px rgba(0,0,0,.25);text-align:center}
-h1{margin:0;font-size:34px;color:#4f46e5}.subtitle{margin-top:8px;color:#64748b;font-size:17px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:25px 0}
-.stat{background:#eef2ff;border-radius:15px;padding:12px 5px}.stat-label{display:block;font-size:13px;color:#64748b;font-weight:bold}
-.number{display:block;font-size:25px;font-weight:bold;margin-top:5px;color:#4338ca}
-.difficulty{background:#fef3c7;color:#92400e;border-radius:15px;padding:12px;font-weight:bold;margin-bottom:20px}
-.bar-label{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:7px}
-.bar{width:100%;height:22px;background:#e2e8f0;border-radius:20px;overflow:hidden}.progress{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .4s}
-.reading-box{text-align:left;background:#f8fafc;border-left:6px solid #6366f1;border-radius:15px;padding:20px;margin-top:25px;line-height:1.6;font-size:17px}
-.reading-title{font-weight:bold;color:#4f46e5;margin-bottom:8px}
-#question{font-size:21px;font-weight:bold;margin:25px 0 15px;color:#172554}
-.answer{display:block;width:90%;margin:10px auto;padding:14px;border:2px solid #c7d2fe;border-radius:13px;background:#eef2ff;color:#312e81;font-size:16px;font-weight:bold;cursor:pointer;transition:.15s}
-.answer:hover:not(:disabled){background:#c7d2fe;transform:translateY(-2px)}.answer:disabled{cursor:not-allowed;opacity:.7}
-.correct{background:#bbf7d0!important;border-color:#22c55e!important}.wrong{background:#fecaca!important;border-color:#ef4444!important}
-#message{min-height:30px;margin:18px 0;font-size:18px;font-weight:bold}
-.reset{border:none;border-radius:12px;padding:12px 20px;background:#ef4444;color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:10px}
-.reset:hover{background:#dc2626}.complete{padding:25px;background:#dcfce7;border-radius:20px;color:#166534;font-size:23px;font-weight:bold;margin-top:20px}
-.encouragement{color:#7c3aed;font-weight:bold;margin-top:8px}
-@media(max-width:550px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}.game{padding:20px}}
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #7c3aed, #2563eb, #06b6d4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #172033;
+  }
+  .game {
+    width: min(900px, 100%);
+    background: white;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.22);
+  }
+  h1 { margin: 0 0 6px; text-align: center; font-size: 38px; }
+  .subtitle { text-align: center; margin: 0 0 20px; color: #5b6475; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .stat {
+    background: #f3f6ff;
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .stat span { display:block; font-size: 25px; margin-top: 3px; }
+  .level {
+    display: inline-block;
+    margin-bottom: 12px;
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+  .progress {
+    height: 18px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #22c55e, #10b981);
+    transition: width .35s ease;
+  }
+  .passage {
+    background: #fff7ed;
+    border: 2px solid #fed7aa;
+    border-radius: 18px;
+    padding: 20px;
+    line-height: 1.7;
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+  .question { font-size: 23px; font-weight: 800; margin: 8px 0 15px; }
+  .answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  button.answer {
+    border: 2px solid #cbd5e1;
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
+    font-size: 17px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .15s, border-color .15s, background .15s;
+  }
+  button.answer:hover {
+    transform: translateY(-2px);
+    border-color: #6366f1;
+    background: #f8faff;
+  }
+  button.answer.correct { background:#dcfce7; border-color:#22c55e; }
+  button.answer.wrong { background:#fee2e2; border-color:#ef4444; }
+  .message {
+    min-height: 30px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 18px;
+  }
+  .footer {
+    margin-top: 18px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+  }
+  .control {
+    border: none;
+    border-radius: 12px;
+    padding: 11px 18px;
+    font-weight: 800;
+    cursor:pointer;
+    background:#172033;
+    color:white;
+  }
+  .hidden { display:none; }
+  .complete {
+    text-align:center;
+    padding: 35px 15px;
+  }
+  .complete h2 { font-size: 34px; margin-bottom: 10px; }
+  @media (max-width: 700px) {
+    .stats, .answers { grid-template-columns: 1fr; }
+    h1 { font-size: 30px; }
+    .game { padding: 18px; }
+  }
 </style>
 </head>
 <body>
 <div class="game">
-<h1>📚 Reading Adventure!</h1>
-<div class="subtitle">Answer questions, level up, and reach 500 points! 🚀</div>
-<div class="stats">
-<div class="stat"><span class="stat-label">⭐ POINTS</span><span class="number" id="points">0</span></div>
-<div class="stat"><span class="stat-label">🏆 GOAL</span><span class="number">500</span></div>
-<div class="stat"><span class="stat-label">🔥 STREAK</span><span class="number" id="streak">0</span></div>
-<div class="stat"><span class="stat-label">📈 LEVEL</span><span class="number" id="level">1</span></div>
+  <h1>📚 Reading Warmup</h1>
+  <p class="subtitle">Earn 500 points by showing what you know!</p>
+
+  <div class="stats">
+    <div class="stat">Points<span id="points">0</span></div>
+    <div class="stat">Streak<span id="streak">0</span></div>
+    <div class="stat">Questions<span id="count">1 / 10</span></div>
+  </div>
+
+  <div class="level" id="levelLabel">Level 1: Warm-Up</div>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div id="gameArea">
+    <div class="passage" id="passage"></div>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div class="message" id="message"></div>
+  </div>
+
+  <div id="complete" class="complete hidden">
+    <h2>🎉 500 POINTS!</h2>
+    <p>You finished the Reading Warmup. Great work!</p>
+  </div>
+
+  <div class="footer">
+    <button class="control" onclick="resetGame()">🔄 Start Over</button>
+  </div>
 </div>
-<div class="difficulty" id="difficulty">🟢 Level 1 — Warm Up</div>
-<div class="bar-label"><span>Your Progress</span><span id="percentage">0%</span></div>
-<div class="bar"><div class="progress" id="progress"></div></div>
-<div class="reading-box"><div class="reading-title">📖 Read the passage:</div><div id="passage"></div></div>
-<div id="question"></div><div id="answers"></div><div id="message"></div>
-<div class="encouragement" id="encouragement">You've got this! 🌟</div>
-<button class="reset" id="resetButton">🔄 Start Over</button>
-</div>
+
 <script>
-const DAILY_LIMIT=500, POINTS_PER_CORRECT=50;
-let points=0,streak=0,level=1,currentQuestion=null,questionAnswered=false,nextQuestionTimer=null;
+const DAILY_LIMIT = 500;
+const POINTS_PER_CORRECT = 50;
+const TOTAL_QUESTIONS = 10;
+const questionBank = [{"level": 1, "title": "Warm-Up", "passage": "Maya packed her library book into her backpack before school. She had finished reading it the night before and was excited to return it and choose a new mystery book.", "question": "Why was Maya excited to go to the library?", "answers": ["She wanted to choose a new mystery book.", "She wanted to buy a backpack.", "She wanted to finish her homework.", "She wanted to meet her teacher."], "correct": 0}, {"level": 2, "title": "Getting Started", "passage": "The playground was wet after a long morning rain. Noah noticed that the clouds were finally breaking apart, so he put on his boots and walked outside to see whether the puddles were beginning to shrink.", "question": "What can the reader infer about the weather?", "answers": ["The rain is probably ending.", "A snowstorm is starting.", "The rain is getting heavier.", "The weather will stay dark all day."], "correct": 0}, {"level": 3, "title": "Think About It", "passage": "Lena practiced her speech in front of a mirror every evening. On the day of the presentation, her voice was still a little shaky, but she remembered to look at her audience and speak clearly.", "question": "Which character trait best describes Lena?", "answers": ["Determined", "Careless", "Impatient", "Forgetful"], "correct": 0}, {"level": 4, "title": "Reading Detective", "passage": "At first, the garden club's new vegetable patch looked like a pile of dirt. After several weeks of watering, weeding, and sunlight, tiny green leaves appeared. Soon, the students could see rows of lettuce and carrots growing.", "question": "What is the main idea of the passage?", "answers": ["Gardens can grow and change with care.", "Students dislike vegetables.", "Carrots grow faster than lettuce.", "Dirt is difficult to work with."], "correct": 0}, {"level": 5, "title": "Brain Power", "passage": "When the coach said the team had a mountain of work before the tournament, the players laughed. They knew he did not mean an actual mountain. He meant they had many difficult tasks to complete.", "question": "What does the phrase \u201ca mountain of work\u201d mean?", "answers": ["A very large amount of work", "Work on a mountain", "A short practice", "A fun outdoor activity"], "correct": 0}, {"level": 6, "title": "Expert Reader", "passage": "Jordan wanted to build a birdhouse. His first design leaned to one side, and the roof would not stay attached. Instead of giving up, he studied the instructions again, measured the wood more carefully, and rebuilt the house.", "question": "What lesson does the passage most strongly suggest?", "answers": ["Mistakes can help you improve when you keep trying.", "Building things is always easy.", "Instructions are never useful.", "Birdhouses should be very small."], "correct": 0}, {"level": 7, "title": "Reading Master", "passage": "The old oak tree stood at the edge of the field. Generations of students had played beneath its branches, and teachers sometimes used its wide shade for outdoor lessons. Although the tree never moved, it had become a familiar part of the school's history.", "question": "Why is the oak tree important to the school?", "answers": ["It connects many generations of students and teachers to the school.", "It is the newest tree on campus.", "It provides a place to store school supplies.", "It was planted last week."], "correct": 0}, {"level": 8, "title": "Challenge Reader", "passage": "Ava read an article about bees. She learned that bees carry pollen from flower to flower, helping many plants produce fruit and seeds. After reading, Ava understood that bees are important not only for making honey but also for healthy ecosystems.", "question": "What is the author's main purpose?", "answers": ["To explain why bees are important.", "To tell a funny story about a bee.", "To persuade readers to become beekeepers.", "To describe how to build a beehive."], "correct": 0}, {"level": 9, "title": "Deep Thinker", "passage": "Marcus had planned to spend Saturday playing video games, but his neighbor's puppy slipped through an open gate. Marcus followed the puppy down the sidewalk, carefully guided it away from the street, and helped return it home. By the time he finished, most of the afternoon was gone.", "question": "What can the reader infer about Marcus?", "answers": ["He is responsible and willing to help others.", "He dislikes animals.", "He never changes his plans.", "He was trying to lose the puppy."], "correct": 0}, {"level": 10, "title": "Reading Mastery", "passage": "During the science fair, Priya noticed that her plant-growth experiment produced different results from what she expected. Instead of hiding the unexpected results, she recorded every measurement, explained what happened, and suggested possible reasons for the difference. Her teacher praised her for treating the results honestly.", "question": "Which idea is best supported by the passage?", "answers": ["Good scientists pay attention to evidence, even when it surprises them.", "Scientists should change results to match predictions.", "Unexpected results mean an experiment should be ignored.", "Science fairs are only about winning prizes."], "correct": 0}];
 
-const questionBank=[
-{level:1,passage:"Emma planted a small tomato plant in her backyard. Every morning, she gave it water and made sure it received plenty of sunlight. After several weeks, tiny green tomatoes began to appear.",question:"What did Emma do every morning?",answers:["She picked tomatoes.","She watered the plant.","She moved the plant inside.","She planted new flowers."],correct:"She watered the plant."},
-{level:1,passage:"Ben packed his backpack before school. He put in his homework, a pencil case, two books, and his lunch. Then he checked his backpack one more time before leaving.",question:"Why did Ben check his backpack again?",answers:["He wanted to make sure he had everything.","He wanted to make his backpack heavier.","He was looking for a toy.","He wanted to eat his lunch."],correct:"He wanted to make sure he had everything."},
-{level:2,passage:"The school garden had once been an empty patch of dirt. Students planted vegetables, flowers, and herbs. They watered the plants and pulled out weeds. By the end of spring, the garden was full of color and life.",question:"What is the main idea of the passage?",answers:["Students dislike gardening.","The school garden changed because students cared for it.","Gardens only need flowers.","The students planted the garden in winter."],correct:"The school garden changed because students cared for it."},
-{level:2,passage:"Marcus wanted to join the basketball team, but he knew he needed to improve his skills. He practiced shooting baskets every afternoon. After a month of practice, he made the team.",question:"Which detail best supports the idea that Marcus worked hard?",answers:["He wanted to join the team.","He practiced every afternoon.","He liked basketball.","He watched other people play."],correct:"He practiced every afternoon."},
-{level:3,passage:"The trail became difficult to follow after the storm. Fallen branches covered parts of the path, and thick mud made each step challenging.",question:"What does 'challenging' most likely mean in the passage?",answers:["Easy","Difficult","Quiet","Beautiful"],correct:"Difficult"},
-{level:3,passage:"Lena was reluctant to give her speech. She stood behind the curtain and took a deep breath before finally walking onto the stage.",question:"What does 'reluctant' mean?",answers:["Excited and ready","Unwilling or unsure","Angry and loud","Confused about the topic"],correct:"Unwilling or unsure"},
-{level:4,passage:"Jake looked out the window at the dark clouds. He quickly grabbed his jacket and ran outside to bring the laundry off the clothesline.",question:"What can the reader infer?",answers:["Jake expected it might rain.","Jake wanted to wash the clothes.","Jake was going to school.","Jake did not like his jacket."],correct:"Jake expected it might rain."},
-{level:4,passage:"After opening the door, Mia noticed muddy footprints across the floor. Her dog sat nearby with its tail wagging and a guilty look on its face.",question:"What most likely caused the muddy footprints?",answers:["Mia's dog walked inside.","Mia spilled a glass of water.","Someone painted the floor.","The floor became muddy by itself."],correct:"Mia's dog walked inside."},
-{level:5,passage:"The wind howled through the trees as the branches danced wildly above the hikers.",question:"What does the phrase 'branches danced' mean?",answers:["The branches moved back and forth in the wind.","The branches made music.","The branches grew taller.","The branches were covered in lights."],correct:"The branches moved back and forth in the wind."},
-{level:5,passage:"When the test was placed on his desk, Carlos's stomach became a knot.",question:"What does the phrase 'his stomach became a knot' suggest?",answers:["Carlos was hungry.","Carlos felt nervous.","Carlos was excited about lunch.","Carlos had just finished exercising."],correct:"Carlos felt nervous."},
-{level:6,passage:"Recycling paper, plastic, and metal can help reduce the amount of trash sent to landfills. Reusing items can also save energy and natural resources. Small choices made by many people can make a large difference.",question:"What is the author's main purpose?",answers:["To entertain readers with a story","To explain why recycling and reusing are helpful","To describe how landfills are built","To convince people to throw things away"],correct:"To explain why recycling and reusing are helpful"},
-{level:6,passage:"Many people think owls are active only at night. While many owl species are nocturnal, some species are active during the day. Their behavior depends on the species and its environment.",question:"Why did the author include this information?",answers:["To correct an overly broad belief about owls","To explain how to train an owl","To describe what owls eat","To tell a funny story about owls"],correct:"To correct an overly broad belief about owls"},
-{level:7,passage:"Daniel stared at the unfinished model on his desk. He had spent three hours building it, but one section refused to fit correctly. For a moment, he considered throwing it away. Instead, he studied the instructions again and noticed a small step he had skipped. He fixed the mistake and finished the model before dinner.",question:"What is the most important lesson from this passage?",answers:["Models are easy to build.","Giving up is sometimes the best choice.","Careful thinking can help solve difficult problems.","Instructions are usually unnecessary."],correct:"Careful thinking can help solve difficult problems."},
-{level:7,passage:"The town's old theater had been empty for years. Some people wanted to tear it down, but others believed it was worth saving. They pointed out its historic architecture and memories shared by generations of families. Eventually, the town repaired the building and turned it into a community arts center.",question:"Why did some people want to save the theater?",answers:["They wanted to build a new theater.","They valued its history and importance to the community.","They wanted the building to remain empty.","They disliked the new arts center."],correct:"They valued its history and importance to the community."}
-];
+let points = 0;
+let streak = 0;
+let currentLevel = 1;
+let questionsAnswered = 0;
+let questionAnswered = false;
+let currentQuestion = null;
+let usedIndexes = new Set();
 
-const pointsElement=document.getElementById("points"),progressElement=document.getElementById("progress"),percentageElement=document.getElementById("percentage"),questionElement=document.getElementById("question"),answersElement=document.getElementById("answers"),messageElement=document.getElementById("message"),passageElement=document.getElementById("passage"),streakElement=document.getElementById("streak"),levelElement=document.getElementById("level"),difficultyElement=document.getElementById("difficulty"),encouragementElement=document.getElementById("encouragement");
+const pointsEl = document.getElementById("points");
+const streakEl = document.getElementById("streak");
+const countEl = document.getElementById("count");
+const levelLabelEl = document.getElementById("levelLabel");
+const progressBarEl = document.getElementById("progressBar");
+const passageEl = document.getElementById("passage");
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const messageEl = document.getElementById("message");
+const gameAreaEl = document.getElementById("gameArea");
+const completeEl = document.getElementById("complete");
 
-function getDifficultyName(){return {1:"🟢 Level 1 — Warm Up",2:"🟢 Level 2 — Getting Started",3:"🟡 Level 3 — Think About It",4:"🟡 Level 4 — Reading Detective",5:"🟠 Level 5 — Brain Power",6:"🔴 Level 6 — Expert Reader",7:"🔥 Level 7 — Reading Master"}[level];}
-function newQuestion(){
- if(points>=DAILY_LIMIT){showComplete();return}
- questionAnswered=false;
- const available=questionBank.filter(q=>q.level===level);
- const pool=available.length?available:questionBank.filter(q=>q.level===7);
- currentQuestion=pool[Math.floor(Math.random()*pool.length)];
- passageElement.textContent=currentQuestion.passage;
- questionElement.textContent=currentQuestion.question;
- answersElement.innerHTML="";
- currentQuestion.answers.forEach(answer=>{
-  const button=document.createElement("button");
-  button.textContent=answer;button.className="answer";button.type="button";
-  button.addEventListener("click",()=>checkAnswer(answer,button));
-  answersElement.appendChild(button);
- });
- difficultyElement.textContent=getDifficultyName();levelElement.textContent=level;
+function availableQuestions() {
+  return questionBank
+    .map((q, i) => (usedIndexes.has(i) ? null : {q, i}))
+    .filter(Boolean);
 }
-function checkAnswer(answer,clickedButton){
- if(questionAnswered)return;
- questionAnswered=true;
- const buttons=answersElement.querySelectorAll("button");
- buttons.forEach(b=>b.disabled=true);
- if(answer===currentQuestion.correct){
-  clickedButton.classList.add("correct");points+=Math.min(POINTS_PER_CORRECT,DAILY_LIMIT-points);streak++;
-  if(level<7)level++;
-  messageElement.textContent=["🎉 Great job!","🌟 Awesome!","🔥 You're on fire!","🧠 Super thinking!","🚀 Amazing reading!","🏆 Excellent work!"][Math.floor(Math.random()*6)];
-  messageElement.style.color="#16a34a";
-  encouragementElement.textContent=`🔥 ${streak} correct in a row! The next question is harder!`;
- }else{
-  clickedButton.classList.add("wrong");
-  buttons.forEach(b=>{if(b.textContent===currentQuestion.correct)b.classList.add("correct")});
-  streak=0;if(level>1)level--;
-  messageElement.textContent="💪 Good try! Read carefully and keep going!";
-  messageElement.style.color="#dc2626";encouragementElement.textContent="📖 Mistakes help your brain learn!";
- }
- updateDisplay();clearTimeout(nextQuestionTimer);
- nextQuestionTimer=setTimeout(()=>{messageElement.textContent="";newQuestion()},1200);
+
+function chooseQuestion() {
+  const available = availableQuestions();
+  if (!available.length) return null;
+
+  // Prefer questions up to one level above the current level.
+  // This keeps the game challenging while still allowing variety.
+  const allowed = available.filter(item => item.q.level <= currentLevel + 1);
+  const pool = allowed.length ? allowed : available;
+
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  usedIndexes.add(pick.i);
+  return pick.q;
 }
-function updateDisplay(){
- pointsElement.textContent=points;streakElement.textContent=streak;levelElement.textContent=level;
- const p=Math.min(points/DAILY_LIMIT*100,100);progressElement.style.width=p+"%";percentageElement.textContent=Math.round(p)+"%";
+
+function newQuestion() {
+  currentQuestion = chooseQuestion();
+  if (!currentQuestion) {
+    showComplete();
+    return;
+  }
+
+  questionAnswered = false;
+  messageEl.textContent = "";
+  passageEl.textContent = currentQuestion.passage;
+  questionEl.textContent = currentQuestion.question;
+
+  answersEl.innerHTML = "";
+  const shuffled = currentQuestion.answers.map((text, index) => ({text, index}))
+    .sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.textContent = item.text;
+    btn.dataset.originalIndex = item.index;
+    btn.onclick = () => checkAnswer(btn, item.index);
+    answersEl.appendChild(btn);
+  });
+
+  updateDisplay();
 }
-function showComplete(){
- passageElement.textContent="🎊 You did it! You became a Reading Master!";
- questionElement.innerHTML='<div class="complete">🏆 500 POINTS! 🏆<br><br>You completed the Reading Adventure!</div>';
- answersElement.innerHTML="";messageElement.textContent="🌟 Fantastic work!";messageElement.style.color="#16a34a";encouragementElement.textContent="📚 Keep reading and keep learning!";
+
+function checkAnswer(button, answerIndex) {
+  if (questionAnswered) return;
+  questionAnswered = true;
+
+  const allButtons = [...document.querySelectorAll(".answer")];
+  allButtons.forEach(b => b.disabled = true);
+
+  const correct = answerIndex === currentQuestion.correct;
+
+  if (correct) {
+    button.classList.add("correct");
+    points += POINTS_PER_CORRECT;
+    streak++;
+
+    if (currentLevel < 10) currentLevel++;
+
+    messageEl.textContent = "✅ Correct! +50 points — the next question gets harder!";
+    updateDisplay();
+
+    if (points >= DAILY_LIMIT) {
+      setTimeout(showComplete, 750);
+    } else {
+      setTimeout(newQuestion, 900);
+    }
+  } else {
+    button.classList.add("wrong");
+
+    allButtons.forEach(b => {
+      if (Number(b.dataset.originalIndex) === currentQuestion.correct) {
+        b.classList.add("correct");
+      }
+    });
+
+    streak = 0;
+    messageEl.textContent = "❌ Not quite! A new random question is coming...";
+    updateDisplay();
+
+    // Wrong answers do not cost points. A different unused question appears.
+    setTimeout(newQuestion, 800);
+  }
 }
-function resetGame(){
- clearTimeout(nextQuestionTimer);nextQuestionTimer=null;points=0;streak=0;level=1;currentQuestion=null;questionAnswered=false;
- messageElement.textContent="";encouragementElement.textContent="You've got this! 🌟";updateDisplay();newQuestion();
+
+function updateDisplay() {
+  pointsEl.textContent = points;
+  streakEl.textContent = streak;
+  countEl.textContent = Math.min(questionsAnswered + 1, TOTAL_QUESTIONS) + " / " + TOTAL_QUESTIONS;
+  levelLabelEl.textContent = "Level " + Math.min(currentLevel, 10) + ": " + (questionBank[Math.min(currentLevel,10)-1].title || "Challenge");
+  progressBarEl.style.width = Math.min((points / DAILY_LIMIT) * 100, 100) + "%";
+  questionsAnswered = usedIndexes.size;
+  countEl.textContent = Math.min(questionsAnswered + 1, TOTAL_QUESTIONS) + " / " + TOTAL_QUESTIONS;
 }
-document.getElementById("resetButton").addEventListener("click",resetGame);
-updateDisplay();newQuestion();
+
+function showComplete() {
+  gameAreaEl.classList.add("hidden");
+  completeEl.classList.remove("hidden");
+  progressBarEl.style.width = "100%";
+}
+
+function resetGame() {
+  points = 0;
+  streak = 0;
+  currentLevel = 1;
+  questionsAnswered = 0;
+  questionAnswered = false;
+  currentQuestion = null;
+  usedIndexes = new Set();
+
+  gameAreaEl.classList.remove("hidden");
+  completeEl.classList.add("hidden");
+  newQuestion();
+}
+
+resetGame();
 </script>
 </body>
+</html>
